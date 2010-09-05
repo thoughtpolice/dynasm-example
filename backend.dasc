@@ -1,0 +1,15 @@
+|.arch x64
+|.actionlist build_actionlist
+
+static int create_backend(Dst_DECL)
+{
+  | // prologue
+  | push rbp
+  | mov rbp, rsp
+  | // set return value
+  | mov rax, 1
+  | // epilogue
+  | leave
+  | ret
+  return 0;
+}
