@@ -30,14 +30,13 @@
   _(16, DIVI,  reg, reg, ___)			\
   /* Call instructions */			\
   _(17, CALL,  label, ___, ___)			\
-  _(18, RET,   ___, ___, ___)			\
+  _(18, FUNC,  label, ___, ___)			\
+  _(19, RET,   ___, ___, ___)			\
   /* Loop instructions */			\
-  _(19, BR,    label, ___, ___)			\
-  _(20, BRLT,  reg, reg, label)			\
-  _(21, BRGT,  reg, reg, label)			\
-  _(22, BRLTE, reg, reg, label)			\
-  _(23, BRGTE, reg, reg, label)			\
-
+  _(20, LBL,   label, ___, ___)			\
+  _(21, BR,    label, ___, ___)			\
+  _(22, BRT,   label, ___, ___)			\
+  _(23, BRF,   label, ___, ___)
 
 /* Definition of bytecode operations */
 typedef enum {
@@ -89,7 +88,21 @@ uint16_t bc_encodings[BC_MAX];
 
 
 /* Now we define the actual encoding of a bytecode instruction itself;
-   that is, the instructions given to the virtual machine to trace. */
+   that is, the instructions given to the virtual machine to trace.
+
+   Format is defined as:
+
+*/
+
+typedef uint64_t bc_inst_t;
+
+/* Now we generate some prototypes for functions to help us encode
+   instructions in an easy way. Defined in bc.c. */
+#define BcInst(op, name, p1, p2, p3)		\
+  bc_inst_t bc_enc_inst_##name();
+BytecodeDef(BcInst)
+#undef  BcInst
+
 
 /* Macros for extracting fields from an instruction */
 #define BCIOp(x) ((x) & 0xFF)

@@ -30,13 +30,13 @@ int engine(uint32_t *ip) {
  l_BC_MULI:
  l_BC_DIV:
  l_BC_DIVI:
+ l_BC_FUNC:
  l_BC_CALL:
  l_BC_RET:
+ l_BC_LBL:
  l_BC_BR:
- l_BC_BRLT:
- l_BC_BRGT:
- l_BC_BRLTE:
- l_BC_BRGTE:
+ l_BC_BRT:
+ l_BC_BRF:
 
   return 0;
 }
