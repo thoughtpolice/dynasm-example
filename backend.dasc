@@ -6,8 +6,13 @@ static int create_backend(Dst_DECL)
   | // prologue
   | push rbp
   | mov rbp, rsp
+  | // loop
+  | mov rcx, 32
+  |1:
+  | dec rcx
+  | jnz <1
   | // set return value
-  | mov rax, 1
+  | mov rax, rcx
   | // epilogue
   | leave
   | ret

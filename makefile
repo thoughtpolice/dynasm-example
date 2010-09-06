@@ -6,7 +6,7 @@ LUA=lua
 OUT=dynasm_test
 CCOPTS=-Wall -Werror -std=c99
 CCOPTS+=-g -O0 -DDEBUG
-#define+=-O2 -DNDEBUG
+#CCOPTS+=-O2 -DNDEBUG
 
 all:
 	$(E) dynasm backend.dasc

@@ -70,6 +70,8 @@ static void write_raw(const char *file, uint8_t *ptr, size_t sz)
   fclose(fp);
 }
 
+/* Setting memory permissions via mprotect() requires an address
+   aligned on a page-sized boundary. */
 void* page_aligned_malloc(size_t sz)
 {
   void* ret = NULL;
@@ -104,9 +106,7 @@ static int build_code(Dst_DECL)
   code = (uint8_t *)page_aligned_malloc(codesz);
   if((ret = dasm_encode(Dst, (void *)code))) return ret;
 
-#ifdef DEBUG
   write_raw("debug.out", code, codesz);
-#endif
 
   if(0 != mprotect(code, codesz, PROT_EXEC|PROT_READ|PROT_WRITE)) {
     handle_err("mprotect");
