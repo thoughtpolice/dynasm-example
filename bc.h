@@ -29,9 +29,14 @@
   _(15, DIV,   reg, reg, ___)			\
   _(16, DIVI,  reg, reg, ___)			\
   /* Call instructions */			\
-  _(17, CALL, label, ___, ___)			\
+  _(17, CALL,  label, ___, ___)			\
+  _(18, RET,   ___, ___, ___)			\
   /* Loop instructions */			\
-  _(18, BR,   imm, ___, ___)			
+  _(19, BR,    label, ___, ___)			\
+  _(20, BRLT,  reg, reg, label)			\
+  _(21, BRGT,  reg, reg, label)			\
+  _(22, BRLTE, reg, reg, label)			\
+  _(23, BRGTE, reg, reg, label)			\
 
 
 /* Definition of bytecode operations */
