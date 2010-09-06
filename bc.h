@@ -36,7 +36,9 @@
   _(20, LBL,   label, ___, ___)			\
   _(21, BR,    label, ___, ___)			\
   _(22, BRT,   label, ___, ___)			\
-  _(23, BRF,   label, ___, ___)
+  _(23, BRF,   label, ___, ___)			\
+  /* Exit */					\
+  _(24, EXIT,  ___, ___, ___)
 
 /* Definition of bytecode operations */
 typedef enum {
@@ -101,6 +103,13 @@ uint16_t bc_encodings[BC_MAX];
    The N/A field should be set to all 0s.
 */
 
+/* Macros for extracting fields from an instruction */
+#define BCIOp(x) ((x) & 0xFF)
+#define BCIP1(x) ((x>>16) & 0xFFFF)
+#define BCIP2(x) ((x>>32) & 0xFFFF)
+#define BCIP3(x) ((x>>48) & 0xFFFF)
+
+
 typedef uint64_t bc_inst_t;  /* Instruction size */
 typedef uint16_t bc_param_t; /* The three parameters are 16-bit */
 
@@ -111,12 +120,5 @@ typedef uint16_t bc_param_t; /* The three parameters are 16-bit */
   bc_inst_t enc_bc_##name(bc_param_t, bc_param_t, bc_param_t);
 BytecodeDef(BcInst)
 #undef  BcInst
-
-
-/* Macros for extracting fields from an instruction */
-#define BCIOp(x) ((x) & 0xFF)
-#define BCIP1(x) ((x>>16) & 0xFFFF)
-#define BCIP2(x) ((x>>32) & 0xFFFF)
-#define BCIP3(x) ((x>>48) & 0xFFFF)
 
 #endif /* _BC_H_ */
