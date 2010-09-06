@@ -8,7 +8,7 @@ CCOPTS=-Wall -Werror -std=c99
 CCOPTS+=-g -O0 -DDEBUG
 #CCOPTS+=-O2 -DNDEBUG
 
-OBJS = main.o bc.o vm.o recorder.o util.o
+OBJS = main.o bc.o vm.o recorder.o util.o compile.o
 
 all: dynasm $(OBJS)
 	$(E) "  " $(CC) $(OBJS) "->" $(OUT)
