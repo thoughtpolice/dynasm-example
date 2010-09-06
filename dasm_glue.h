@@ -1,12 +1,17 @@
 #ifndef _DASM_GLUE_H_
 #define _DASM_GLUE_H_
 
+/* General DynASM definitions */
+#define DASM_MAXSECTION 1024
+#define DASM_ALIGNED_WRITES 1 /* aligned writing */
+#ifdef DEBUG
+#define DASM_CHECKS 1         /* sanity checks */
+#endif
+
 /* DynASM glue definitions */
 #define Dst      ctx
 #define Dst_DECL BuildCtx *ctx
 #define Dst_REF  (ctx->D)
-
-#include "dynasm/dasm_proto.h" /* prototypes */
 
 /* DynASM glue macros */
 #define DASM_M_GROW(ctx, t, p, sz, need) \

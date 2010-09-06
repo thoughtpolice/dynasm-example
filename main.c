@@ -9,6 +9,7 @@
 
 #include "util.h"
 
+
 typedef struct {
   struct dasm_State *D;
 } BuildCtx;
@@ -17,14 +18,12 @@ typedef int (*dasm_gen_func)();
 
 /* General definitions */
 #define GLOB_MAX 1024
-#define DASM_MAXSECTION 1024
-#define DASM_ALIGNED_WRITES 1 /* aligned writing */
-#ifdef DEBUG
-#define DASM_CHECKS 1         /* sanity checks */
-#endif
 
 /* Include our glue macros */
 #include "dasm_glue.h" 
+
+/* Prototypes & definitions */
+#include "dynasm/dasm_proto.h" 
 
 /* Include DynASM implementation */
 #include "dynasm/dasm_x86.h"
