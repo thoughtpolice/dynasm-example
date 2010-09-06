@@ -36,7 +36,7 @@
 
 /* Definition of bytecode operations */
 typedef enum {
-#define BcEnum(op, name, p1, p2, p3) BC_##name,
+#define BcEnum(op, name, p1, p2, p3) BC_##name = op,
   BytecodeDef(BcEnum)
 #undef  BcEnum
 } BytecodeOp;
