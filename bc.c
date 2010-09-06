@@ -22,7 +22,7 @@ uint16_t bc_encodings[] = {
 			  bc_param_t par2,		\
 			  bc_param_t par3) {		\
     							\
-    bc_inst_t r;					\
+    bc_inst_t r = 0;					\
     r |= par3; r = r << 16;	      			\
     r |= par2; r = r << 16;	       			\
     r |= par1; r = r << 32;				\
