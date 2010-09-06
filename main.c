@@ -1,13 +1,13 @@
-#define _XOPEN_SOURCE 600
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <stddef.h>
-
-#include <unistd.h>
 #include <errno.h>
+
 #include <sys/mman.h>
+
+#include "util.h"
 
 typedef struct {
   struct dasm_State *D;
@@ -23,38 +23,15 @@ typedef int (*dasm_gen_func)();
 #define DASM_CHECKS 1         /* sanity checks */
 #endif
 
-/* DynASM glue definitions */
-#define Dst      ctx
-#define Dst_DECL BuildCtx *ctx
-#define Dst_REF  (ctx->D)
-
-#include "dynasm/dasm_proto.h" /* prototypes */
-
-/* DynASM glue macros */
-#define DASM_M_GROW(ctx, t, p, sz, need) \
-  do { \
-    size_t _sz = (sz), _need = (need); \
-    if (_sz < _need) { \
-      if (_sz < 16) _sz = 16; \
-      while (_sz < _need) _sz += _sz; \
-      (p) = (t *)realloc((p), _sz); \
-      if ((p) == NULL) exit(1); \
-      (sz) = _sz; \
-    } \
-  } while(0)
-
-#define DASM_M_FREE(ctx, p, size) free(p)
+/* Include our glue macros */
+#include "dasm_glue.h" 
 
 /* Include DynASM implementation */
 #include "dynasm/dasm_x86.h"
 
-/* Include our backend */
+/* Include our code generator */
 #include "backend.h"
 
-
-/* General macros */
-#define handle_err(msg) \
-  do { perror(msg); exit(1); } while(0)
 
 static void write_raw(const char *file, uint8_t *ptr, size_t sz)
 {
@@ -70,19 +47,6 @@ static void write_raw(const char *file, uint8_t *ptr, size_t sz)
   fclose(fp);
 }
 
-/* Setting memory permissions via mprotect() requires an address
-   aligned on a page-sized boundary. */
-void* page_aligned_malloc(size_t sz)
-{
-  void* ret = NULL;
-  size_t pagesz = (size_t)sysconf(_SC_PAGESIZE);
-  
-  if(0 != posix_memalign(&ret, pagesz, sz)) {
-    handle_err("posix_memalign");
-  }
-
-  return ret;
-}
 
 static int build_code(Dst_DECL)
 {
@@ -103,14 +67,10 @@ static int build_code(Dst_DECL)
   /* Finalize */
   (void)dasm_checkstep(Dst, -1); /* sanity check */
   if((ret = dasm_link(Dst, &codesz))) return ret;
-  code = (uint8_t *)page_aligned_malloc(codesz);
+  code = (uint8_t *)pa_malloc(codesz, true);
   if((ret = dasm_encode(Dst, (void *)code))) return ret;
 
   write_raw("debug.out", code, codesz);
-
-  if(0 != mprotect(code, codesz, PROT_EXEC|PROT_READ|PROT_WRITE)) {
-    handle_err("mprotect");
-  }
 
   dasm_gen_func fp = (dasm_gen_func)code;
   ret = fp();

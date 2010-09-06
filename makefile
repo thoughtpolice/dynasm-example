@@ -11,7 +11,7 @@ CCOPTS+=-g -O0 -DDEBUG
 all:
 	$(E) dynasm backend.dasc
 	$(Q)$(LUA) ./dynasm/dynasm.lua -c ./backend.dasc > backend.h
-	$(E) $(CC) main.c
-	$(Q)$(CC) $(CCOPTS) -o $(OUT) main.c
+	$(E) $(CC) $(OUT)
+	$(Q)$(CC) $(CCOPTS) -o $(OUT) main.c util.c
 clean:
 	$(Q)rm -rf $(OUT) *.o *~ backend.h *.dSYM debug.out
