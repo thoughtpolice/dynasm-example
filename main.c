@@ -5,17 +5,21 @@
 #include <stddef.h>
 #include <errno.h>
 
-#include "compile.h"
 #include "util.h"
+#include "bc.h"
+#include "vm.h"
+
 
 int main(int ac, char **av)
 {
-  BuildCtx ctx_;
-  BuildCtx *ctx = &ctx_;
-  int ret = 0;
+  int i = 0;
+  bc_inst_t program[128] = { 0, };
 
-  if((ret = build_code(ctx))) {
-    fprintf(stderr,"DynASM error: %08x\n", ret);
-  }
-  return ret;
+  program[i++] = enc_bc_ADD(1,2,3);
+  program[i++] = enc_bc_CALL(1,2,3);
+  program[i++] = enc_bc_BR(1,2,3);
+  program[i++] = enc_bc_EXIT(1,2,3);
+
+  engine(program);
+  return 0;
 }

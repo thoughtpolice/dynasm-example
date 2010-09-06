@@ -27,7 +27,7 @@ uint16_t bc_encodings[] = {
     r |= par2; r = r << 16;	       			\
     r |= par1; r = r << 32;				\
     r |= op;						\
-    return (r & ~0);					\
+    return r;					\
   }
 
 BytecodeDef(BcInst)
