@@ -8,15 +8,17 @@ CCOPTS=-Wall -Werror -std=c99
 CCOPTS+=-g -O0 -DDEBUG
 #CCOPTS+=-O2 -DNDEBUG
 
-OBJS = main.o bc.o vm.o recorder.o util.o compile.o
+DASM_F = backend.h
+OBJS   = main.o bc.o vm.o recorder.o util.o compile.o
 
-all: dynasm $(OBJS)
+
+all: $(DASM_F) $(OBJS)
 	$(E) "  " $(CC) $(OBJS) "->" $(OUT)
 	$(Q)$(CC) $(CCOPTS) -o $(OUT) $(OBJS)
 
-dynasm: backend.dasc
-	$(E) "  DynASM" backend.dasc
-	$(Q)$(LUA) ./dynasm/dynasm.lua -c ./backend.dasc > backend.h
+%.h: %.dasc
+	$(E) "  DynASM" $<
+	$(Q)$(LUA) ./dynasm/dynasm.lua -c $< > $@
 
 %.o: %.c
 	$(E) "  " $(CC) $< 
