@@ -18,8 +18,16 @@ uint16_t bc_encodings[] = {
 
 /* Generate functions for encoding values */
 #define BcInst(op, name, p1, p2, p3)			\
-  bc_inst_t bc_enc_inst_##name() {			\
-    return 0;						\
+  bc_inst_t enc_bc_##name(bc_param_t par1,		\
+			  bc_param_t par2,		\
+			  bc_param_t par3) {		\
+    							\
+    bc_inst_t r;					\
+    r |= par3; r = r << 16;	      			\
+    r |= par2; r = r << 16;	       			\
+    r |= par1; r = r << 32;				\
+    r |= op;						\
+    return (r & ~0);					\
   }
 
 BytecodeDef(BcInst)

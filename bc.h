@@ -63,10 +63,10 @@ typedef enum {
 /* Now we define how we encode bytecode operand information.
    This is defined in bc.c as bc_encodings.
 
-   LSB                               MSB
+   LSB                             MSB
    1              8   10   12   14  16
    +---------------------------------+
-   |   Op         | P1 | P2 | P3 |NIL|
+   |   Opcode     | P1 | P2 | P3 |NIL|
    +---------------------------------+
 
   where NIL=BcMode_none
@@ -91,20 +91,32 @@ uint16_t bc_encodings[BC_MAX];
    that is, the instructions given to the virtual machine to trace.
 
    Format is defined as:
+   
+   LSB                                MSB
+   1        8     16     32     48     64
+   +------------------------------------+
+   | Opcode | N/A  | P1   | P2   | P3   |
+   +------------------------------------+
 
+   The N/A field should be set to all 0s.
 */
 
-typedef uint64_t bc_inst_t;
+typedef uint64_t bc_inst_t;  /* Instruction size */
+typedef uint16_t bc_param_t; /* The three parameters are 16-bit */
 
 /* Now we generate some prototypes for functions to help us encode
-   instructions in an easy way. Defined in bc.c. */
+   instructions in an easy way. Defined in bc.c, look at the BcInst
+   macro. */
 #define BcInst(op, name, p1, p2, p3)		\
-  bc_inst_t bc_enc_inst_##name();
+  bc_inst_t enc_bc_##name(bc_param_t, bc_param_t, bc_param_t);
 BytecodeDef(BcInst)
 #undef  BcInst
 
 
 /* Macros for extracting fields from an instruction */
 #define BCIOp(x) ((x) & 0xFF)
+#define BCIP1(x) ((x>>16) & 0xFFFF)
+#define BCIP2(x) ((x>>32) & 0xFFFF)
+#define BCIP3(x) ((x>>48) & 0xFFFF)
 
 #endif /* _BC_H_ */
