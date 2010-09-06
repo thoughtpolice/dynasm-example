@@ -66,10 +66,10 @@ typedef enum {
 #define BcMode(op, name, p1, p2, p3)		\
   ((op)|(BcMode_##p1<<8)|(BcMode_##p2<<16)|(BcMode_##p3<<24))
 
-#define BCMOp(x) (x & 0xF)
-#define BCMP1(x) BCMOp((x >> 8))
-#define BCMP2(x) BCMOp((x >> 16))
-#define BCMP3(x) BCMOp((x >> 24))
+#define BCMOp(x) ((x) & 0xF)
+#define BCMP1(x) BCMOp((x) >> 8)
+#define BCMP2(x) BCMOp((x) >> 16)
+#define BCMP3(x) BCMOp((x) >> 24)
 
 uint32_t bc_encodings[BC_MAX];
 #endif /* _BC_H_ */
