@@ -9,43 +9,43 @@
    of the operand encoding (and '___'), see BytecodeMode. */
 #define BytecodeDef(_)				\
   /* Comparison and equality */			\
-  _(0,  LT,    reg, reg, ___)			\
-  _(1,  LTI,   reg, imm, ___)			\
-  _(2,  GT,    reg, reg, ___)			\
-  _(3,  GTI,   reg, imm, ___)			\
-  _(4,  LTE,   reg, reg, ___)			\
-  _(5,  LTEI,  reg, imm, ___)			\
-  _(6,  GTE,   reg, reg, ___)			\
-  _(7,  GTEI,  reg, imm, ___)			\
+  _(0,  LT,    reg, reg)			\
+  _(1,  LTI,   reg, imm)			\
+  _(2,  GT,    reg, reg)			\
+  _(3,  GTI,   reg, imm)			\
+  _(4,  LTE,   reg, reg)			\
+  _(5,  LTEI,  reg, imm)			\
+  _(6,  GTE,   reg, reg)			\
+  _(7,  GTEI,  reg, imm)			\
   /* Unary operations */			\
-  _(8,  NEG,   reg, ___, ___)			\
+  _(8,  NEG,   reg, ___)			\
   /* Binary operations */			\
-  _(9,  ADD,   reg, reg, ___)			\
-  _(10, ADDI,  reg, imm, ___)			\
-  _(11, SUB,   reg, reg, ___)			\
-  _(12, SUBI,  reg, imm, ___)			\
-  _(13, MUL,   reg, reg, ___)			\
-  _(14, MULI,  reg, imm, ___)			\
-  _(15, DIV,   reg, reg, ___)			\
-  _(16, DIVI,  reg, reg, ___)			\
+  _(9,  ADD,   reg, reg)			\
+  _(10, ADDI,  reg, imm)			\
+  _(11, SUB,   reg, reg)			\
+  _(12, SUBI,  reg, imm)			\
+  _(13, MUL,   reg, reg)			\
+  _(14, MULI,  reg, imm)			\
+  _(15, DIV,   reg, reg)			\
+  _(16, DIVI,  reg, reg)			\
   /* Call instructions */			\
-  _(17, CALL,  label, ___, ___)			\
-  _(18, FUNC,  label, ___, ___)			\
-  _(19, RET,   ___, ___, ___)			\
+  _(17, CALL,  label, ___)			\
+  _(18, FUNC,  label, ___)			\
+  _(19, RET,   ___, ___)			\
   /* Loop instructions */			\
-  _(20, LBL,   label, ___, ___)			\
-  _(21, BR,    label, ___, ___)			\
-  _(22, BRT,   label, ___, ___)			\
-  _(23, BRF,   label, ___, ___)			\
+  _(20, LBL,   label, ___)			\
+  _(21, BR,    label, ___)			\
+  _(22, BRT,   label, ___)			\
+  _(23, BRF,   label, ___)			\
   /* Setting register values */			\
-  _(24, SETI,  reg, imm, ___)			\
-  _(25, SETR,  reg, reg, ___)			\
+  _(24, SETI,  reg, imm)			\
+  _(25, SETR,  reg, reg)			\
   /* Exit */					\
-  _(26, EXIT,  ___, ___, ___)
+  _(26, EXIT,  ___, ___)
 
 /* Definition of bytecode operations */
 typedef enum {
-#define BcEnum(op, name, p1, p2, p3) BC_##name = op,
+#define BcEnum(op, name, p1, p2) BC_##name = op,
   BytecodeDef(BcEnum)
 #undef  BcEnum
 } BytecodeOp;
@@ -68,25 +68,24 @@ typedef enum {
 /* Now we define how we encode bytecode operand information.
    This is defined in bc.c as bc_encodings.
 
-   LSB                             MSB
-   1              8   10   12   14  16
-   +---------------------------------+
-   |   Opcode     | P1 | P2 | P3 |NIL|
-   +---------------------------------+
+   LSB                                MSB
+   1              8   10   12    14    16
+   +------------------------------------+
+   |   Opcode     | P1 | P2 |    NIL    |
+   +------------------------------------+
 
   where NIL=BcMode_none
 */
 
 /* BcMode is used in conjunction with BytecodeDef to generate the
    bytecode operand info table. See bc.c. */
-#define BcMode(op, name, p1, p2, p3)		\
-  ((op)|(BcMode_##p1<<8)|(BcMode_##p2<<10)|(BcMode_##p3<<12)|(BcMode_none<<14))
+#define BcMode(op, name, p1, p2)		\
+  ((op)|(BcMode_##p1<<8)|(BcMode_##p2<<10)|(BcMode_none<<12)|(BcMode_none<<14))
 
 /* Convenience macros for extracting operand info from table */
 #define BCMOp(x) ((x) & 0xFF)
 #define BCMP1(x) (((x) >> 8) & 0x3)
 #define BCMP2(x) (((x) >> 10) & 0x3)
-#define BCMP3(x) (((x) >> 12) & 0x3)
 
 /* The operand info table */
 uint16_t bc_encodings[BC_MAX];
@@ -97,38 +96,40 @@ uint16_t bc_encodings[BC_MAX];
 
    Format is defined as:
    
-   LSB                                MSB
-   1        8     16     32     48     64
-   +------------------------------------+
-   | Opcode | N/A  | P1   | P2   | P3   |
-   +------------------------------------+
+   LSB                             MSB
+   1        8   16   32     48     64
+   +---------------------------------+
+   | Opcode |   P1    |     P2       |
+   +---------------------------------+
 
    The N/A field should be set to all 0s.
 */
 
 /* Macros for extracting fields from an instruction.
-   Must be kept in alignment with encoder code in bc.c!*/
+   Must be kept in alignment with encoder in bc.c!*/
 #define BCIOp(x) ((x) & 0xFF)
-#define BCIP1(x) ((x>>16) & 0xFFFF)
-#define BCIP2(x) ((x>>32) & 0xFFFF)
-#define BCIP3(x) ((x>>48) & 0xFFFF)
+#define BCIP1(x) ((x>>8) & 0xFFFFFF)
+#define BCIP2(x) ((x>>32) & 0xFFFFFFFF)
 
 
 typedef uint64_t bc_inst_t;  /* Instruction size */
-typedef uint16_t bc_param_t; /* The three parameters are 16-bit */
+typedef uint32_t bc_param_t; 
+/* We say parameters are 32 bits in size but in practice
+   only one of them is, the first parameter only uses 24 bits
+   and the remaining one uses 32 bits. */
 
 /* Now we generate some prototypes for functions to help us encode
    instructions in an easy way. Defined in bc.c, look at the BcInst
    macro. */
-#define BcInst(op, name, p1, p2, p3)		\
-  bc_inst_t enc_bc_##name(bc_param_t, bc_param_t, bc_param_t);
+#define BcInst(op, name, p1, p2)		\
+  bc_inst_t enc_bc_##name(bc_param_t, bc_param_t);
 BytecodeDef(BcInst)
 #undef  BcInst
 
 /* Macros for encoding parameters for the encoding functions above. */
-#define reg(x) (x)
-#define imm(x) (x)
-#define lbl(x) (x)
-#define nnil   (0)
+#define reg(x) ((x) & 0xFFFFFF) /* Register refs are 24 bits */
+#define lbl(x) ((x) & 0xFFFFFF) /* Label refs are 24 bits */
+#define imm(x) (x) /* Immediates are 32 bit */
+#define nnil   0
 
 #endif /* _BC_H_ */
