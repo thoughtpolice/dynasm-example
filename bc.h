@@ -37,8 +37,11 @@
   _(21, BR,    label, ___, ___)			\
   _(22, BRT,   label, ___, ___)			\
   _(23, BRF,   label, ___, ___)			\
+  /* Setting register values */			\
+  _(24, SETI,  reg, imm, ___)			\
+  _(25, SETR,  reg, reg, ___)			\
   /* Exit */					\
-  _(24, EXIT,  ___, ___, ___)
+  _(26, EXIT,  ___, ___, ___)
 
 /* Definition of bytecode operations */
 typedef enum {
@@ -103,7 +106,8 @@ uint16_t bc_encodings[BC_MAX];
    The N/A field should be set to all 0s.
 */
 
-/* Macros for extracting fields from an instruction */
+/* Macros for extracting fields from an instruction.
+   Must be kept in alignment with encoder code in bc.c!*/
 #define BCIOp(x) ((x) & 0xFF)
 #define BCIP1(x) ((x>>16) & 0xFFFF)
 #define BCIP2(x) ((x>>32) & 0xFFFF)
@@ -120,5 +124,11 @@ typedef uint16_t bc_param_t; /* The three parameters are 16-bit */
   bc_inst_t enc_bc_##name(bc_param_t, bc_param_t, bc_param_t);
 BytecodeDef(BcInst)
 #undef  BcInst
+
+/* Macros for encoding parameters for the encoding functions above. */
+#define reg(x) (x)
+#define imm(x) (x)
+#define lbl(x) (x)
+#define nnil   (0)
 
 #endif /* _BC_H_ */

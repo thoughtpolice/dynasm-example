@@ -16,7 +16,7 @@ int engine(bc_inst_t *ip) {
 
  l_BC_LT:
   printf("got %lu\n", BCIOp(ip[0]));
-  goto *optable[BCIOp(((++ip))[0])];
+  goto *optable[BCIOp((++ip)[0])];
  l_BC_LTI:
   printf("got %lu\n", BCIOp(ip[0]));
   goto *optable[BCIOp((++ip)[0])];
@@ -84,6 +84,12 @@ int engine(bc_inst_t *ip) {
   printf("got %lu\n", BCIOp(ip[0]));
   goto *optable[BCIOp((++ip)[0])];
  l_BC_BRF:
+  printf("got %lu\n", BCIOp(ip[0]));
+  goto *optable[BCIOp((++ip)[0])];
+ l_BC_SETI:
+  printf("got %lu\n", BCIOp(ip[0]));
+  goto *optable[BCIOp((++ip)[0])];
+ l_BC_SETR:
   printf("got %lu\n", BCIOp(ip[0]));
   goto *optable[BCIOp((++ip)[0])];
  l_BC_EXIT:
