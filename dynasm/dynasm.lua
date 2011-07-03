@@ -2,7 +2,7 @@
 -- DynASM. A dynamic assembler for code generation engines.
 -- Originally designed and implemented for LuaJIT.
 --
--- Copyright (C) 2005-2010 Mike Pall. All rights reserved.
+-- Copyright (C) 2005-2011 Mike Pall. All rights reserved.
 -- See below for full copyright notice.
 ------------------------------------------------------------------------------
 
@@ -10,14 +10,14 @@
 local _info = {
   name =	"DynASM",
   description =	"A dynamic assembler for code generation engines",
-  version =	"1.2.1",
-  vernum =	 10201,
-  release =	"2010-01-09",
+  version =	"1.3.0",
+  vernum =	 10300,
+  release =	"2011-05-05",
   author =	"Mike Pall",
   url =		"http://luajit.org/dynasm.html",
   license =	"MIT",
   copyright =	[[
-Copyright (C) 2005-2010 Mike Pall. All rights reserved.
+Copyright (C) 2005-2011 Mike Pall. All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -723,8 +723,10 @@ local function splitstmt_one(c)
     splitlvl = ")"..splitlvl
   elseif c == "[" then
     splitlvl = "]"..splitlvl
-  elseif c == ")" or c == "]" then
-    if sub(splitlvl, 1, 1) ~= c then werror("unbalanced () or []") end
+  elseif c == "{" then
+    splitlvl = "}"..splitlvl
+  elseif c == ")" or c == "]" or c == "}" then
+    if sub(splitlvl, 1, 1) ~= c then werror("unbalanced (), [] or {}") end
     splitlvl = sub(splitlvl, 2)
   elseif splitlvl == "" then
     return " \0 "
@@ -740,7 +742,7 @@ local function splitstmt(stmt)
 
   -- Split at commas and equal signs, but obey parentheses and brackets.
   splitlvl = ""
-  stmt = gsub(stmt, "[,%(%)%[%]]", splitstmt_one)
+  stmt = gsub(stmt, "[,%(%)%[%]{}]", splitstmt_one)
   if splitlvl ~= "" then werror("unbalanced () or []") end
 
   -- Split off opcode.
@@ -783,7 +785,7 @@ dostmt = function(stmt)
   if not f then
     if not g_arch then wfatal("first statement must be .arch") end
     -- Improve error report.
-    for i=0,16 do
+    for i=0,9 do
       if map_op[op.."_"..i] then
 	werror("wrong number of parameters for `"..op.."'")
       end

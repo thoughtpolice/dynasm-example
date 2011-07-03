@@ -113,3 +113,7 @@ TAGS/
 
 #dasm
 backend.h
+debug.out
+tools/.waf*
+.wafbuild
+.lock-wafbuild

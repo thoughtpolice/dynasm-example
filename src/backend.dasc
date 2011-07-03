@@ -13,6 +13,7 @@ static int create_backend(Dst_DECL)
   | jnz <1
   | // set return value
   | mov rax, rcx
+  | inc rax
   | // epilogue
   | leave
   | ret

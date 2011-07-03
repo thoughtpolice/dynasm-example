@@ -77,8 +77,7 @@ typedef enum {
   where NIL=BcMode_none
 */
 
-/* BcMode is used in conjunction with BytecodeDef to generate the
-   bytecode operand info table. See bc.c. */
+/* Define the bytecode operand table */
 #define BcMode(op, name, p1, p2)		\
   ((op)|(BcMode_##p1<<8)|(BcMode_##p2<<10)|(BcMode_none<<12)|(BcMode_none<<14))
 
@@ -86,9 +85,6 @@ typedef enum {
 #define BCMOp(x) ((x) & 0xFF)
 #define BCMP1(x) (((x) >> 8) & 0x3)
 #define BCMP2(x) (((x) >> 10) & 0x3)
-
-/* The operand info table */
-uint16_t bc_encodings[BC_MAX];
 
 
 /* Now we define the actual encoding of a bytecode instruction itself;
@@ -118,18 +114,35 @@ typedef uint32_t bc_param_t;
    only one of them is, the first parameter only uses 24 bits
    and the remaining one uses 32 bits. */
 
-/* Now we generate some prototypes for functions to help us encode
-   instructions in an easy way. Defined in bc.c, look at the BcInst
-   macro. */
-#define BcInst(op, name, p1, p2)		\
-  bc_inst_t enc_bc_##name(bc_param_t, bc_param_t);
-BytecodeDef(BcInst)
-#undef  BcInst
-
 /* Macros for encoding parameters for the encoding functions above. */
 #define reg(x) ((x) & 0xFFFFFF) /* Register refs are 24 bits */
 #define lbl(x) ((x) & 0xFFFFFF) /* Label refs are 24 bits */
 #define imm(x) (x) /* Immediates are 32 bit */
 #define nnil   0
+
+
+/* Here we use BcMode + BytecodeDef to define the operand encoding
+   table */
+UNUSED static uint16_t bc_encodings[] = {
+  /* Extra #define to append comma for enum so we can reuse BcMode */
+#define BcMode1(op, name, p1, p2) BcMode(op,name,p1,p2),
+  BytecodeDef(BcMode1)
+#undef  BcMode1
+};
+
+/* Generate functions for encoding values */
+#define BcInst(op, name, p1, p2)      \
+  static inline \
+  bc_inst_t enc_bc_##name(bc_param_t par1, bc_param_t par2) {    \
+    bc_inst_t r = 0;          \
+    r |= par2; r = r << 24;             \
+    r |= par1; r = r << 8;        \
+    r |= op;            \
+    return r;         \
+  }
+
+BytecodeDef(BcInst)
+#undef  BcInst
+
 
 #endif /* _BC_H_ */

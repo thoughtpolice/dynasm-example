@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 -- DynASM PPC module.
 --
--- Copyright (C) 2005-2010 Mike Pall. All rights reserved.
+-- Copyright (C) 2005-2011 Mike Pall. All rights reserved.
 -- See dynasm.lua for full copyright notice.
 ------------------------------------------------------------------------------
 
@@ -9,9 +9,9 @@
 local _info = {
   arch =	"ppc",
   description =	"DynASM PPC module",
-  version =	"1.2.1",
-  vernum =	 10201,
-  release =	"2010-XX-XX",
+  version =	"1.3.0",
+  vernum =	 10300,
+  release =	"2011-05-05",
   author =	"Mike Pall",
   license =	"MIT",
 }
@@ -252,13 +252,13 @@ local map_op = {
   addis_3 =	"3c000000RR0I",
   lis_2 =	"3c000000RI",
   lus_2 =	"3c000000RU",
-  bc_3 = 	"40000000AAK",
-  bcl_3 = 	"40000001AAK",
+  bc_3 =	"40000000AAK",
+  bcl_3 =	"40000001AAK",
   bdnz_1 =	"42000000K",
   bdz_1 =	"42400000K",
   sc_0 =	"44000000",
-  b_1 = 	"48000000J",
-  bl_1 = 	"48000001J",
+  b_1 =		"48000000J",
+  bl_1 =	"48000001J",
   rlwimi_5 =	"50000000RR~AAA.",
   rlwinm_5 =	"54000000RR~AAA.",
   rlwnm_5 =	"5c000000RR~RAA.",

@@ -1,23 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <errno.h>
-
-#include "util.h"
+#include "master.h"
 #include "compile.h"
 
-/* Include our glue macros */
-#include "dasm_glue.h" 
-
-/* Prototypes & definitions */
+/* DynASM implementation */
 #include "dynasm/dasm_proto.h" 
-
-/* Include DynASM implementation */
 #include "dynasm/dasm_x86.h"
 
-/* Include our code generator */
+/* Include our own JIT code */
 #include "backend.h"
 
 
@@ -25,11 +13,13 @@ static void write_raw(const char *file, uint8_t *ptr, size_t sz)
 {
   FILE* fp = fopen(file, "w");
   if(fp == NULL) {
-    handle_err("fopen");
+    perror("fopen");
+    exit(1);
   }
 
   if(fwrite(ptr, 1, sz, fp) != sz) {
-    handle_err("fwrite");
+    perror("fwrite");
+    exit(1);
   }
 
   fclose(fp);
@@ -57,7 +47,7 @@ int build_code(Dst_DECL)
   code = (uint8_t *)pa_malloc(codesz, true);
   if((ret = dasm_encode(Dst, (void *)code))) return ret;
 
-  write_raw("debug.out", code, codesz);
+  //write_raw("debug.out", code, codesz);
 
   dasm_gen_func fp = (dasm_gen_func)code;
   ret = fp();

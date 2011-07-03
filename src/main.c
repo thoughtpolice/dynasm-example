@@ -1,14 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <errno.h>
+#include "master.h"
 
+#include "compile.h"
 #include "util.h"
 #include "bc.h"
 #include "vm.h"
-
 
 int main(int ac, char **av)
 {
@@ -22,6 +17,12 @@ int main(int ac, char **av)
   program[i++] = enc_bc_BRT(lbl(1),nnil);     /*  brt lbl_1 */
   program[i++] = enc_bc_EXIT(nnil,nnil);      /* exit */
 
+  trace("Running program\n");
   engine(program);
+
+  trace("Compiling code\n");
+  Dst_DECL = zcalloc(sizeof(Dst_TYPE));
+  build_code(Dst);
+  free(Dst);
   return 0;
 }

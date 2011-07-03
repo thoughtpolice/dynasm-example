@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdint.h>
+#include "master.h"
 
 #include "bc.h"
 #include "vm.h"

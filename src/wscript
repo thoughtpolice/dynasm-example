@@ -1,0 +1,30 @@
+# -*- Python -*-
+
+def configure(ctx):
+    # Make sure we have Lua/LuaJIT
+    try:
+        ctx.find_program('luajit', var='LUA')
+    except:
+        ctx.find_program('lua', var='LUA') # this will fail if we can't find either
+
+def build(bld):
+    # Build DynASM code
+    bld(rule='${LUA} ../dynasm/dynasm.lua -c ${SRC} > ${TGT}',
+        source='backend.dasc', target='backend.h'
+    )
+    bld.program(
+		source   = bld.path.ant_glob('*.c'),
+		target   = 'nikto',
+		includes = '..',
+
+        defines  = [ 
+                     'DEBUG'
+                  #  'NDEBUG'
+                   ],
+
+        cflags   = [ '-std=c99', '-Wall', '-Werror'
+                  #, '-O2'
+                   , '-O0'
+                   ],
+        dflags   = [ '-g' ] 
+    )
