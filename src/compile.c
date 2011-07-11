@@ -9,7 +9,7 @@
 #include "backend.h"
 
 
-static void write_raw(const char *file, uint8_t *ptr, size_t sz)
+UNUSED static void write_raw(const char *file, uint8_t *ptr, size_t sz)
 {
   FILE* fp = fopen(file, "w");
   if(fp == NULL) {
